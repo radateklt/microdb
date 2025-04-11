@@ -1,6 +1,6 @@
 {
   "name": "@radatek/microdb",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Lightweight plain file store database with MongoDB interface",
   "author": "Darius Kisonas",
   "license": "MIT",
@@ -12,25 +12,18 @@
     "mongodb"
   ],
   "files": [
-    "./dist/microdb.js",
-    "./dist/microdb.d.ts"
+    "dist"
   ],
-  "exports": {
-    ".": {
-      "import": "./dist/microdb.js",
-      "require": "./dist/microdb.cjs"
-    }
-  },
   "type": "module",
   "main": "./dist/microdb.js",
   "module": "./dist/microdb.js",
   "types": "./dist/microdb.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/radteki/microdb.git"
+    "url": "git+https://github.com/radateklt/microdb.git"
   },
   "scripts": {
-    "build": "pnpm --package typescript dlx tsc -d -t es2017 microdb.ts --outDir dist"
+    "build": "pnpm --package typescript dlx tsc -d -m nodenext -t es2017 microdb.ts --outDir dist && sed -i -E ':a;N;$!ba;s/\\n +private _[^\\n]+//g;s/export \\{\\};//' dist/microdb.d.ts"
   },
   "devDependencies": {
     "@types/node": "^22.14.0"

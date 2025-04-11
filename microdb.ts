@@ -1,7 +1,7 @@
 /**
  * MicroDB
- * @version 1.0.2
- * @package @dariuski/microdb
+ * @version 1.0.3
+ * @package @radatek/microdb
  * @copyright Darius Kisonas 2022
  * @license MIT
  */
