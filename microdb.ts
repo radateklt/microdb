@@ -1,15 +1,15 @@
 /**
  * MicroDB
- * @version 1.0.3
+ * @version 1.0.4
  * @package @radatek/microdb
  * @copyright Darius Kisonas 2022
  * @license MIT
  */
 
 import { promises as fs, createReadStream, createWriteStream, WriteStream } from 'fs'
-import * as crypto from 'crypto'
-import * as readline from 'readline'
-import * as path from 'path'
+import { randomBytes } from 'crypto'
+import { createInterface as readline } from 'readline'
+import path from 'path'
 
 interface FieldFilter {[key: string]: any}
 interface QueryOperators {
@@ -55,7 +55,7 @@ interface Update {
   [key: string]: any | UpdateOperator
 }
 
-let globalObjectId: Buffer = crypto.randomBytes(8)
+let globalObjectId: Buffer = randomBytes(8)
 function newObjectId(): string {
   for (let i = 7; i >= 0; i--)
     if (++globalObjectId[i] < 256)
@@ -907,7 +907,7 @@ class CollectionFile {
     try {
       await fs.stat(this.fileName)
       await new Promise((resolve: Function) => {
-        const frs = createReadStream(this.fileName), reader = readline.createInterface(frs)
+        const frs = createReadStream(this.fileName), reader = readline(frs)
         let fileLines = 0, maxId = 0
 
         const readLine = (line: string) => {
