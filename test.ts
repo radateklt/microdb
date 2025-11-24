@@ -7,7 +7,7 @@ const test: {
   skip: (name: string, ...args: any) => void
   mode: (mode: 'stop' | 'continue') => void
   run: () => Promise<void>
-} = global.test = (() => {
+} = ((global: any) => {
   let tests: {name: string, fn?: Function}[] = [], _mode: 'stop' | 'skip' | 'continue' = 'continue', _skip: boolean, _run: boolean
   const test = (name: string, fn?: Function) => {
     tests.push({ name, fn })
@@ -17,8 +17,8 @@ const test: {
   test.mode = (mode: 'stop' | 'skip' | 'continue') => _mode = mode
   test.run = async () => {
     if (_run) return
-    _run = true
     const {log, error, warn} = console
+    _run = true
     let count = 0, fail = 0, lastError: Error | undefined 
     const run = async (prefix: string) => {
       for (const {name, fn} of tests) {
@@ -39,7 +39,7 @@ const test: {
             lastError = undefined
           } else
             out('32m✔')
-        } catch (e) {
+        } catch (e: any) {
           fail++
           out('31m✘', e.message)
           e.name !== 'AssertionError' && error(e.stack);
@@ -52,14 +52,15 @@ const test: {
     tests.length && await run('');
     _run = false
     if (count) {
-      const l = '—'.repeat(16)+'\n', res = process.getActiveResourcesInfo().filter(n => n !== 'CloseReq' && n !== 'PipeWrap' && n !== 'TTYWrap')
+      const ignRes = ['CloseReq', 'PipeWrap', 'TTYWrap', 'FSReqCallback']
+      const l = '—'.repeat(16)+'\n', res = process.getActiveResourcesInfo().filter(n => !ignRes.includes(n))
       log(`\x1b[${fail?'33m'+l+'✘':'32m'+l+'✔'} ${count-fail}/${count} ${fail?'FAILED':'SUCCESS'}\x1b[0m`)
       res.length && warn('Active resources:', ...res)
       res.length && setTimeout(() => process.exit(1), 1000)
     }
   }
-  return test
-})()
+  return global.test = test
+})(global)
 
 let db: MicroDB, col: Collection
 

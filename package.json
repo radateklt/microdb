@@ -1,6 +1,6 @@
 {
   "name": "@radatek/microdb",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Lightweight plain file store database with MongoDB interface",
   "author": "Darius Kisonas",
   "license": "MIT",
@@ -11,9 +11,6 @@
     "microdb",
     "mongodb"
   ],
-  "files": [
-    "dist"
-  ],
   "type": "module",
   "main": "microdb.ts",
   "repository": {
@@ -21,11 +18,12 @@
     "url": "git+https://github.com/radateklt/microdb.git"
   },
   "scripts": {
-    "build": "pnpm --package typescript dlx tsc -d -m nodenext -t es2021 microdb.ts --outDir dist && sed -Ei 's/\\\"use strict\\\";\\n\\n//g' dist/microdb.js && sed -Ei ':a;N;$!ba;s/\\n +private _[^\\n]+//g;s/export \\{\\};//g' dist/microdb.d.ts",
+    "prepublishOnly": "pnpm build && echo 'call: pnpm run publish' && exit 1",
+    "build": "pnpm --package typescript dlx tsc -d -m nodenext -t es2021 microdb.ts --outDir dist && sed -Ei 's/\\\"use strict\\\";\\n\\n//g' dist/microdb.js && sed -Ei ':a;N;$!ba;s/\\n +private _[^\\n]+//g;s/export \\{\\};//g' dist/microdb.d.ts; cp package.json dist/package.json && sed -Ei ':a;N;$!ba;s|\"main\"[^\\n]+|\"main\": \"microdb.js\",\\n  \"module\": \"microdb.js\",\\n  \"types\": \"microdb.d.ts\",|;s|,\\n  \"scripts\".*$|\\n}|' dist/package.json",
     "test": "node test.ts",
-    "publish": "pnpm run build && cp package.json package.json.orig && sed -Ei ':a;N;$!ba;s|\"main\"[^\\n]+|\"main\": \"./dist/microdb.js\",\\n  \"module\": \"./dist/microdb.js\",\\n  \"types\": \"./dist/microdb.d.ts\",|;s|,\\n  \"scripts\".*$|\\n}|' package.json && pnpm publish --access public --no-git-checks; mv package.json.orig package.json"
+    "publish": "pnpm publish dist --access public"
   },
   "devDependencies": {
-    "@types/node": "^24.2.1"
+    "@types/node": "^24.10.1"
   }
 }

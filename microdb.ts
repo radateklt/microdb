@@ -1,6 +1,6 @@
 /**
  * MicroDB
- * @version 1.0.4
+ * @version 1.0.6
  * @package @radatek/microdb
  * @copyright Darius Kisonas 2022
  * @license MIT
@@ -434,10 +434,17 @@ export class Collection {
               if (name[0] === '$')
                 console.warn('operator ' + name + ' not supported')
               else {
+                if (v === null) {
+                  list.push('doc.' + name + '===null')
+                  continue
+                } else
                 if (typeof (v) === 'object') {
                   const sublist: string[] = []
                   for (const q in v) {
                     switch (q) {
+                      case '$exists':
+                        sublist.push('!!doc.' + name + '===' + getVar(prefix, name, q))
+                        break
                       case '$eq':
                         sublist.push('doc.' + name + '===' + getVar(prefix, name, q))
                         break
@@ -1238,12 +1245,12 @@ export class Client {
     this._db = new MicroDB(url, options)
   }
 
-  async open () {
+  async connect () {
     await this._db.close()
     return this._db.open()
   }
 
-  db (name: string) {
+  db (name?: string) {
     return this._db
   }
 
