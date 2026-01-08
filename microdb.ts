@@ -1,6 +1,6 @@
 /**
  * MicroDB
- * @version 1.0.6
+ * @version 1.0.7
  * @package @radatek/microdb
  * @copyright Darius Kisonas 2022
  * @license MIT
@@ -65,7 +65,7 @@ function newObjectId(): string {
 
 export function clone<T extends Document> (obj: T, fields?: FieldFilter): Partial<T> {
   function copyValue (v: any, fields?: any): any {
-    if (typeof v === 'object') {
+    if (v && typeof v === 'object') {
       if (Array.isArray(v))
         return v.map(item => copyValue(item, fields))
       if (!Object.getPrototypeOf(v) || Object.getPrototypeOf(v) === Object.prototype)
@@ -91,7 +91,7 @@ export function serialize<T extends Document> (doc: T): string {
   function copy (doc: any, cdoc: any): any {
     for (const n in doc) {
       const v = doc[n]
-      if (typeof v === 'object') {
+      if (v && typeof v === 'object') {
         if (Array.isArray(v)) {
           copy(v, cdoc[n] = [])
         } else if (!Object.getPrototypeOf(v) || Object.getPrototypeOf(v) === Object.prototype) {
@@ -115,7 +115,7 @@ export function deserialize<T extends Document> (doc: string): T {
   function fix (doc: any): any {
     for (const n in doc) {
       const v = doc[n]
-      if (typeof v === 'object') {
+      if (v && typeof v === 'object') {
         if (Array.isArray(v)) {
           fix(v)
         } else {
@@ -538,7 +538,7 @@ export class Collection {
   private _queryObject(query: Query, data: Document) {
     for (const item in query) {
       const v = query[item]
-      if (typeof v === 'object') {
+      if (v && typeof v === 'object') {
         for (const oper in v) {
           switch (oper) {
             case '$eq':
@@ -607,6 +607,8 @@ export class Collection {
     for (const n in upd) {
       count++
       if (doc[n] !== upd[n]) {
+        if (doc[n] === null || upd[n] === null)
+          return false
         if (typeof upd[n] === 'object' && typeof doc[n] === 'object' && this._equal(doc[n], upd[n]))
           continue
         return false

@@ -1,6 +1,6 @@
 {
   "name": "@radatek/microdb",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Lightweight plain file store database with MongoDB interface",
   "author": "Darius Kisonas",
   "license": "MIT",
@@ -24,6 +24,6 @@
     "publish": "pnpm publish dist --access public"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1"
+    "@types/node": "^25.0.3"
   }
 }
